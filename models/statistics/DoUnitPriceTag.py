@@ -1,13 +1,8 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from TagTools import rule_to_tuple
+from tools.TagTools import rule_to_tuple
 
 class DoUnitPriceTag(object):
-
-    # @staticmethod
-    # def rule_to_tuple(rule):
-    #     start, end = map(int, rule.split("-"))
-    #     return start, end
 
     @staticmethod
     def start():
@@ -16,7 +11,7 @@ class DoUnitPriceTag(object):
         password = 'userbb'
         host = '8.130.94.175'
         port = '3306'
-        database = 'tags_dat'
+        database = 'test'
         url = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
 
         # 创建数据库引擎
@@ -47,15 +42,19 @@ class DoUnitPriceTag(object):
         # 打标签
         results = []
         for _, row in attr.iterrows():
-            temp_df = order_amount_df[(order_amount_df['unitPrice'] >= row['start']) & (order_amount_df['unitPrice'] <= row['end'])]
-            temp_df['unitPriceRange'] = row['name']
+            temp_df = order_amount_df[(order_amount_df['unitPrice'] >= row['start']) & (order_amount_df['unitPrice'] <= row['end'])].copy()
+            temp_df = temp_df.assign(unitPriceRange=row['name'])
             results.append(temp_df[['memberId', 'unitPriceRange', 'unitPrice']].rename(columns={'memberId': 'userId'}))
 
-        rst = pd.concat(results)
+        if results:
+            rst = pd.concat(results)
 
-        # 存储打好标签的数据
-        rst.to_sql('tbl_unitPrice_tag', con=engine, if_exists='replace', index=False)
-        print("客单价标签计算完成！")
+            # 存储打好标签的数据
+            rst.to_sql('tbl_unitPrice_tag', con=engine, if_exists='replace', index=False)
+            print("客单价标签计算完成！")
+        else:
+            print("没有符合条件的数据进行标签化。")
+
 
 if __name__ == '__main__':
     DoUnitPriceTag.start()

@@ -4,11 +4,6 @@ from models.match.DoPoliticalFaceTag import DoPoliticalFaceTag
 from models.match.DoMarriageTag import DoMarriageTag
 from models.match.DoNationalityTag import DoNationalityTag
 from models.match.DoIsBlackListTag import DoIsBlackListTag
-from models.mining.DoUsgTag import DoUsgTag
-from models.mining.DoRfmTag import DoRfmTag
-from models.mining.DoPsmTag import DoPsmTag
-from models.mining.DoRfeTag import DoRfeTag
-from models.mining.DoBpTag import DoBpTag
 from models.statistics.DoAgeRangeTag import DoAgeRangeTag
 from models.statistics.DoBuyFrequencyTag import DoBuyFrequencyTag
 from models.statistics.DoConsumeCycleTag import DoConsumeCycleTag
@@ -20,9 +15,6 @@ from models.statistics.DoMaxOrderTag import DoMaxOrderTag
 from models.statistics.DoPayTypeTag import DoPayTypeTag
 from models.statistics.DoReturnRateTag import DoReturnRateTag
 from models.statistics.DoUnitPriceTag import DoUnitPriceTag
-from DoUserProfile import DoUserProfile
-from flask_apscheduler.auth import HTTPBasicAuth
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 
 class Config(object):
@@ -51,7 +43,7 @@ class Config(object):
             'id': 'do_gender_tag',
             'func': DoGenderTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '1',
             'hour': '11',
             'minute': '5',
@@ -62,7 +54,7 @@ class Config(object):
             'id': 'do_job_tag',
             'func': DoJobTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '2',
             'hour': '11',
             'minute': '5',
@@ -73,7 +65,7 @@ class Config(object):
             'id': 'do_isBlackList_tag',
             'func': DoIsBlackListTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '3',
             'hour': '11',
             'minute': '5',
@@ -84,7 +76,7 @@ class Config(object):
             'id': 'do_marriage_tag',
             'func': DoMarriageTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '4',
             'hour': '11',
             'minute': '5',
@@ -95,7 +87,7 @@ class Config(object):
             'id': 'do_nationality_tag',
             'func': DoNationalityTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '5',
             'hour': '11',
             'minute': '5',
@@ -106,7 +98,7 @@ class Config(object):
             'id': 'do_politicalFace_tag',
             'func': DoPoliticalFaceTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '6',
             'hour': '11',
             'minute': '5',
@@ -117,7 +109,7 @@ class Config(object):
         #     'id': 'do_psm_tag',
         #     'func': DoPsmTag.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '7',
         #     'hour': '11',
         #     'minute': '5',
@@ -128,7 +120,7 @@ class Config(object):
         #     'id': 'do_rfe_tag',
         #     'func': DoRfeTag.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '8',
         #     'hour': '11',
         #     'minute': '5',
@@ -139,7 +131,7 @@ class Config(object):
         #     'id': 'do_rfm_tag',
         #     'func': DoRfmTag.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '9',
         #     'hour': '11',
         #     'minute': '5',
@@ -150,7 +142,7 @@ class Config(object):
         #     'id': 'do_usg_tag',
         #     'func': DoUsgTag.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '10',
         #     'hour': '11',
         #     'minute': '5',
@@ -161,7 +153,7 @@ class Config(object):
         #     'id': 'do_bp_tag',
         #     'func': DoBpTag.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '11',
         #     'hour': '11',
         #     'minute': '5',
@@ -172,7 +164,7 @@ class Config(object):
             'id': 'do_ageRange_tag',
             'func': DoAgeRangeTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '12',
             'hour': '11',
             'minute': '5',
@@ -183,7 +175,7 @@ class Config(object):
             'id': 'do_buyFrequency_tag',
             'func': DoBuyFrequencyTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '13',
             'hour': '11',
             'minute': '5',
@@ -194,7 +186,7 @@ class Config(object):
             'id': 'do_consumeCycle_tag',
             'func': DoConsumeCycleTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '14',
             'hour': '11',
             'minute': '5',
@@ -205,7 +197,7 @@ class Config(object):
             'id': 'do_exchangeRate_tag',
             'func': DoExchangeRateTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '15',
             'hour': '11',
             'minute': '5',
@@ -216,7 +208,7 @@ class Config(object):
             'id': 'do_lastLogin_tag',
             'func': DoLastLoginTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '16',
             'hour': '11',
             'minute': '5',
@@ -227,7 +219,7 @@ class Config(object):
             'id': 'do_logFrequency_tag',
             'func': DoLogFrequencyTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '17',
             'hour': '11',
             'minute': '5',
@@ -238,7 +230,7 @@ class Config(object):
             'id': 'do_logTimeSlot_tag',
             'func': DoLogTimeSlotTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '18',
             'hour': '11',
             'minute': '5',
@@ -249,7 +241,7 @@ class Config(object):
             'id': 'do_maxOrder_tag',
             'func': DoMaxOrderTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '19',
             'hour': '11',
             'minute': '5',
@@ -260,7 +252,7 @@ class Config(object):
             'id': 'do_payType_tag',
             'func': DoPayTypeTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '20',
             'hour': '11',
             'minute': '5',
@@ -271,7 +263,7 @@ class Config(object):
             'id': 'do_returnRate_tag',
             'func': DoReturnRateTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '21',
             'hour': '11',
             'minute': '5',
@@ -282,7 +274,7 @@ class Config(object):
             'id': 'do_unitPrice_tag',
             'func': DoUnitPriceTag.start,
             'trigger': 'cron',
-            'month': '6',
+            'month': '8',
             'day': '22',
             'hour': '11',
             'minute': '5',
@@ -293,7 +285,7 @@ class Config(object):
         #     'id': 'do_user_profile',
         #     'func': DoUserProfile.start,
         #     'trigger': 'cron',
-        #     'month': '6',
+        #     'month': '8',
         #     'day': '23',
         #     'hour': '11',
         #     'minute': '5',

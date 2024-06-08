@@ -29,7 +29,7 @@ class DoRfmTag(object):
             frequency=pd.NamedAgg(column="orderSn", aggfunc="count"),
             monetary=pd.NamedAgg(column="orderAmount", aggfunc="sum")
         ).reset_index()
-        rfm_df['recency'] = (pd.to_datetime('now') - pd.to_datetime(rfm_df['max_finishTime'])).dt.days
+        rfm_df['recency'] = (pd.to_datetime('now') - pd.to_datetime(rfm_df['max_finishTime'])).dt.days - 90
 
         # 按照RFM值进行打分
         rfm_df['r_score'] = pd.cut(rfm_df['recency'], bins=[0, 3, 6, 9, 15, float('inf')], labels=[5, 4, 3, 2, 1],
@@ -40,13 +40,9 @@ class DoRfmTag(object):
                                    labels=[1, 2, 3, 4, 5], right=False).astype(float)
 
         # 使用RFM_SCORE进行KMeans聚类（K=5）
-        scaler = MinMaxScaler()
-        features = scaler.fit_transform(rfm_df[['r_score', 'f_score', 'm_score']])
-
-        rfm_df[['r_score', 'f_score', 'm_score']] = features
-
         model = MLModelTools.load_model(rfm_df[['r_score', 'f_score', 'm_score']], "rfm")
         rfm_df['prediction'] = model.predict(rfm_df[['r_score', 'f_score', 'm_score']])
+
 
         # 获取聚类中心，并根据rfm大小修改索引
         centers = model.cluster_centers_
@@ -56,6 +52,9 @@ class DoRfmTag(object):
         # 读取基础标签表tbl_basic_tags
         df2 = pd.read_sql('SELECT * FROM tbl_basic_tags', con=engine)
         attr = df2.query("level == 5 and pid == 301")[['name', 'rule']]
+
+        # 转换rule列为字符串类型
+        attr['rule'] = attr['rule'].astype(str)
 
         # 打标签
         rst = rfm_df.merge(attr, left_on='prediction', right_on='rule', how='left')

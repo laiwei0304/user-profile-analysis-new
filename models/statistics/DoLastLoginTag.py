@@ -1,14 +1,10 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from datetime import datetime
-from TagTools import rule_to_tuple
+from tools.TagTools import rule_to_tuple
+
 
 class DoLastLoginTag(object):
-
-    # @staticmethod
-    # def rule_to_tuple(rule):
-    #     start, end = map(int, rule.split("-"))
-    #     return start, end
 
     @staticmethod
     def start():
@@ -17,7 +13,7 @@ class DoLastLoginTag(object):
         password = 'userbb'
         host = '8.130.94.175'
         port = '3306'
-        database = 'tags_dat'
+        database = 'test'
         url = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
 
         # 创建数据库引擎
@@ -43,23 +39,27 @@ class DoLastLoginTag(object):
         df2['lastLoginTime'] = pd.to_datetime(df2['lastLoginTime'], unit='s')
 
         # 获取当前日期时间
-        df2['now_time'] = datetime.now()
+        now_time = datetime.now()
 
         # 计算天数差
-        df2['lastLogin'] = (df2['now_time'] - df2['lastLoginTime']).dt.days
+        df2['lastLogin'] = (now_time - df2['lastLoginTime']).dt.days - 90
 
         # 打标签
         results = []
         for _, row in attr.iterrows():
-            temp_df = df2[(df2['lastLogin'] >= row['start']) & (df2['lastLogin'] <= row['end'])]
-            temp_df['loginCycle'] = row['name']
+            temp_df = df2[(df2['lastLogin'] >= row['start']) & (df2['lastLogin'] <= row['end'])].copy()
+            temp_df = temp_df.assign(loginCycle=row['name'])
             results.append(temp_df[['id', 'loginCycle']].rename(columns={'id': 'userId'}))
 
-        rst = pd.concat(results)
+        if results:
+            rst = pd.concat(results)
 
-        # 存储打好标签的数据
-        rst.to_sql('tbl_lastLogin_tag', con=engine, if_exists='replace', index=False)
-        print("最近登录标签计算完成！")
+            # 存储打好标签的数据
+            rst.to_sql('tbl_lastLogin_tag', con=engine, if_exists='replace', index=False)
+            print("最近登录标签计算完成！")
+        else:
+            print("没有符合条件的数据进行标签化。")
+
 
 if __name__ == '__main__':
     DoLastLoginTag.start()

@@ -1,14 +1,10 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from datetime import datetime, timedelta
-from TagTools import rule_to_tuple
+from datetime import datetime
+from tools.TagTools import rule_to_tuple
+
 
 class DoLogFrequencyTag(object):
-
-    # @staticmethod
-    # def rule_to_tuple(rule):
-    #     start, end = map(int, rule.split("-"))
-    #     return start, end
 
     @staticmethod
     def start():
@@ -17,7 +13,7 @@ class DoLogFrequencyTag(object):
         password = 'userbb'
         host = '8.130.94.175'
         port = '3306'
-        database = 'tags_dat'
+        database = 'test'
         url = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
 
         # 创建数据库引擎
@@ -39,6 +35,10 @@ class DoLogFrequencyTag(object):
         # 读取日志表
         df2 = pd.read_sql(f'SELECT {", ".join(selectField)} FROM {selectTable}', con=engine)
 
+        # 检查数据是否正确读取
+        print("日志数据预览：")
+        print(df2.head())
+
         # 获取当前日期时间
         now_time = datetime.now()
 
@@ -47,27 +47,38 @@ class DoLogFrequencyTag(object):
 
         # 计算 log_time 与当前时间的差值，并过滤掉 log_time 在一个月之前的数据
         df2['logCycle'] = (now_time - df2['log_time']).dt.days
-        df2 = df2[df2['logCycle'] < 30]
+        df2 = df2[df2['logCycle'] < 120]
 
-        # 将 logCycle 转换为二进制标志
-        df2['logCycle'] = df2['logCycle'].apply(lambda x: 1 if x < 30 else 0)
+        # 检查过滤后的数据
+        print("过滤后的日志数据预览：")
+        print(df2.head())
 
         # 按照用户ID分组，获取一个月内的log数量
-        count_log_df = df2.groupby('global_user_id')['logCycle'].sum().reset_index()
+        count_log_df = df2.groupby('global_user_id')['logCycle'].count().reset_index()
         count_log_df.columns = ['userId', 'frequency']
+
+        # 检查分组后的数据
+        print("分组后的日志数据预览：")
+        print(count_log_df.head())
 
         # 打标签
         results = []
         for _, row in attr.iterrows():
-            temp_df = count_log_df[(count_log_df['frequency'] >= row['start']) & (count_log_df['frequency'] <= row['end'])]
-            temp_df['value'] = row['name']
-            results.append(temp_df[['userId', 'value', 'frequency']])
+            temp_df = count_log_df[
+                (count_log_df['frequency'] >= row['start']) & (count_log_df['frequency'] <= row['end'])].copy()
+            if not temp_df.empty:
+                temp_df['value'] = row['name']
+                results.append(temp_df[['userId', 'value', 'frequency']])
 
-        rst = pd.concat(results)
+        if results:
+            rst = pd.concat(results)
 
-        # 存储打好标签的数据
-        rst.to_sql('tbl_logFrequency_tag', con=engine, if_exists='replace', index=False)
-        print("访问频率标签计算完成！")
+            # 存储打好标签的数据
+            rst.to_sql('tbl_logFrequency_tag', con=engine, if_exists='replace', index=False)
+            print("访问频率标签计算完成！")
+        else:
+            print("没有符合条件的数据进行标签化。")
+
 
 if __name__ == '__main__':
     DoLogFrequencyTag.start()

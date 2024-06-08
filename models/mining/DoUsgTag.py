@@ -76,6 +76,9 @@ class DoUsgTag(object):
         df2 = pd.read_sql('SELECT * FROM tbl_basic_tags', con=engine)
         attr = df2.query("level == 5 and pid == 318")[['name', 'rule']]
 
+        # 转换rule列为字符串类型
+        attr['rule'] = attr['rule'].astype(str)
+
         # 打标签
         rst = gender_df.merge(attr, left_on='usg', right_on='rule', how='left')
         rst = rst.drop(columns=['rule']).rename(columns={'name': 'usg'})

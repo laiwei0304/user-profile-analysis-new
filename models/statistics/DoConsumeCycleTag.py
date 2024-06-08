@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from datetime import datetime
-from TagTools import rule_to_tuple
+from tools.TagTools import rule_to_tuple
 
 
 class DoConsumeCycleTag(object):
@@ -18,7 +18,7 @@ class DoConsumeCycleTag(object):
         password = 'userbb'
         host = '8.130.94.175'
         port = '3306'
-        database = 'tags_dat'
+        database = 'test'
         url = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
 
         # 创建数据库引擎

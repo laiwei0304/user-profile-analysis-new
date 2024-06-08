@@ -8,7 +8,7 @@ class DoMaxOrderTag(object):
     @staticmethod
     def start():
         # 数据库连接配置
-        engine = create_engine('mysql+pymysql://userbb:userbb@8.130.94.175:3306/tags_dat')
+        engine = create_engine('mysql+pymysql://userbb:userbb@8.130.94.175:3306/test')
 
         # 读取表数据
         df = pd.read_sql('SELECT * FROM tbl_basic_tags', engine)

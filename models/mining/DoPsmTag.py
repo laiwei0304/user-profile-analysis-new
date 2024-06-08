@@ -42,11 +42,8 @@ class DoPsmTag(object):
         grouped['psm_score'] = grouped['psm'].fillna(0.00000001)
 
         # 使用RFM_SCORE进行KMeans单列聚类（K=5）
-        scaler = MinMaxScaler()
-        grouped['features'] = scaler.fit_transform(grouped[['psm_score']])
-
-        model = MLModelTools.load_model(grouped[['features']], "psm")
-        grouped['prediction'] = model.predict(grouped[['features']])
+        model = MLModelTools.load_model(grouped[['psm_score']], "psm")
+        grouped['prediction'] = model.predict(grouped[['psm_score']])
 
         # 获取聚类中心，并根据psm大小修改索引
         centers = model.cluster_centers_
@@ -56,6 +53,9 @@ class DoPsmTag(object):
         # 读取基础标签表tbl_basic_tags
         df2 = pd.read_sql('SELECT * FROM tbl_basic_tags', con=engine)
         attr = df2[(df2['level'] == 5) & (df2['pid'] == 312)][['name', 'rule']]
+
+        # 转换rule列为字符串类型
+        attr['rule'] = attr['rule'].astype(str)
 
         # 打标签
         rst = grouped.merge(attr, left_on='prediction', right_on='rule', how='left')

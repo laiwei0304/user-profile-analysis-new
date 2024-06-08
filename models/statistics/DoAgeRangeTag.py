@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from TagTools import rule_to_tuple
+from tools.TagTools import rule_to_tuple
 
 
 class DoAgeRangeTag(object):
@@ -34,14 +34,17 @@ class DoAgeRangeTag(object):
         # 读取用户表
         df2 = pd.read_sql(f'SELECT {", ".join(selectField)} FROM {selectTable}', con=engine)
 
+        # 确保 birthday 列为字符串类型
+        df2['birthday'] = df2['birthday'].astype(str)
+
         # 转换生日日期格式
         df2['bornDate'] = df2['birthday'].str.replace("-", "").astype(int)
 
         # 打标签
         results = []
         for _, row in attr.iterrows():
-            temp_df = df2[(df2['bornDate'] >= row['start']) & (df2['bornDate'] <= row['end'])]
-            temp_df['ageRange'] = row['name']
+            temp_df = df2[(df2['bornDate'] >= row['start']) & (df2['bornDate'] <= row['end'])].copy()
+            temp_df = temp_df.assign(ageRange=row['name'])
             results.append(temp_df[['id', 'ageRange']].rename(columns={'id': 'userId'}))
 
         rst = pd.concat(results)

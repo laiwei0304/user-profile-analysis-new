@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from TagTools import url_to_product, string_to_product
+from tools.TagTools import url_to_product, string_to_product
 from MLModelTools import MLModelTools
 
 

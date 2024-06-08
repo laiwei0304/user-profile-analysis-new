@@ -27,7 +27,7 @@ class DoRfeTag(object):
             frequency=pd.NamedAgg(column="loc_url", aggfunc="count"),
             engagements=pd.NamedAgg(column="loc_url", aggfunc="nunique")
         ).reset_index()
-        rfe_df['recency'] = (pd.to_datetime('now') - pd.to_datetime(rfe_df['last_time'])).dt.days
+        rfe_df['recency'] = (pd.to_datetime('now') - pd.to_datetime(rfe_df['last_time'])).dt.days - 90
 
         # 按照RFE值进行打分
         rfe_df['r_score'] = pd.cut(rfe_df['recency'], bins=[0, 15, 30, 45, 60, float('inf')], labels=[5, 4, 3, 2, 1],
@@ -49,6 +49,9 @@ class DoRfeTag(object):
         # 读取基础标签表tbl_basic_tags
         df2 = pd.read_sql('SELECT * FROM tbl_basic_tags', con=engine)
         attr = df2.query("level == 5 and pid == 307")[['name', 'rule']]
+
+        # 转换rule列为字符串类型
+        attr['rule'] = attr['rule'].astype(str)
 
         # 打标签
         rst = rfe_df.merge(attr, left_on='prediction', right_on='rule', how='left')
